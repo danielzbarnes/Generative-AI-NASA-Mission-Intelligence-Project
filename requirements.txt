@@ -1,0 +1,7 @@
+streamlit
+pandas
+openai
+chromadb
+ragas
+langchain-openai
+pysqlite3-binary; platform_system=="Linux"
