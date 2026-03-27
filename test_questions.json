@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What were the main objectives and achievements of the Apollo 11 mission?",
+    "category": "overview",
+    "reference": "Apollo 11's main objectives were to perform a crewed lunar landing and return safely to Earth. Achievements include the first human landing on the Moon by Neil Armstrong and Buzz Aldrin on July 20, 1969, and the safe return of the crew."
+  },
+  {
+    "question": "Who were the crew members of Apollo 13?",
+    "category": "crew",
+    "reference": "The Apollo 13 crew consisted of James A. Lovell (Commander), John L. Swigert (Command Module Pilot), and Fred W. Haise (Lunar Module Pilot)."
+  },
+  {
+    "question": "What caused the Challenger disaster?",
+    "category": "disaster_analysis",
+    "reference": "The Challenger disaster was caused by the failure of an O-ring seal in its right solid rocket booster, leading to the destruction of the shuttle 73 seconds after launch."
+  },
+  {
+    "question": "What were the main challenges faced during Apollo 13?",
+    "category": "emergency",
+    "reference": "Apollo 13 faced a critical failure when an oxygen tank exploded, forcing the crew to abort the lunar landing and return to Earth using the Lunar Module as a lifeboat."
+  },
+  {
+    "question": "What was the timeline of key events during the Apollo 11 mission?",
+    "category": "timeline",
+    "reference": "Apollo 11 launched on July 16, 1969, landed on the Moon on July 20, 1969, and returned to Earth on July 24, 1969."
+  }
+]
