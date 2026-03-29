@@ -123,8 +123,23 @@ def format_context(documents: List[str], metadatas: List[Dict]) -> str:
     header = "Relevant Mission Information:\n"
     context_parts = [header]
 
+    combined = []
+    for doc, meta in zip(documents, metadatas):
+        score = meta.get("score", 0) or meta.get("distance", 0) or 0
+        combined.append((doc, meta, score))
+
+    combined.sort(key=lambda x: x[2], reverse=True)
+    
+    seen = set()
+    unique_combined = []
+    for doc, meta, score in combined:
+        identifier = (meta.get("mission", "Unknown Mission"), meta.get("category", "Unknown Category"))
+        if identifier not in seen:
+            seen.add(identifier)
+            unique_combined.append((doc, meta, score))
+
     # TODO: Loop through paired documents and their metadata using enumeration
-    for idx, (doc, meta) in enumerate(zip(documents, metadatas)):
+    for idx, (doc, meta, score) in enumerate(zip(documents, metadatas, [m.get("score", 0) or m.get("distance", 0) for m in metadatas])):
         
         # TODO: Extract mission information from metadata with fallback value
         mission_info = meta.get("mission", "Unknown Mission")
@@ -136,7 +151,7 @@ def format_context(documents: List[str], metadatas: List[Dict]) -> str:
         source_info = meta.get("source", "Unknown Source")
         
         # TODO: Extract category information from metadata with fallback value
-        category_info = meta.get("category", "Unknown Category")
+        category_info = meta.get("document_category", meta.get("category", "Unknown Category"))
         
         # TODO: Clean up category name formatting (replace underscores, capitalize)
         category_info = category_info.replace("_", " ").title()
