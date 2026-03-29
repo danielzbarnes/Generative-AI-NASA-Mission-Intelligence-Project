@@ -37,3 +37,9 @@ The high-level view of the project:
    # Launch chat interface
    streamlit run chat.py
    ```
+
+### **Testing**
+
+Test questions can be found in the `test_questions.json` file and processed using the `ragas_batch_evaluator.py` script.
+
+
