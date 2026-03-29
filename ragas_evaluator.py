@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 # RAGAS imports
 try:
     from ragas import SingleTurnSample, EvaluationDataset
-    from ragas.metrics import BleuScore, NonLLMContextPrecisionWithReference, ResponseRelevancy, Faithfulness, RougeScore
+    from ragas.metrics import BleuScore, ContextPrecision, ResponseRelevancy, Faithfulness, RougeScore
     from ragas import evaluate
     RAGAS_AVAILABLE = True
 except ImportError:
@@ -25,25 +25,14 @@ def evaluate_response_quality(question: str, answer: str, contexts: List[str]) -
     evaluator_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings(model="text-embedding-3-small"))
     
     # TODO: Define an instance for each metric to evaluate
-    metrics = [
+    metrics = [        
         ResponseRelevancy(),
         Faithfulness(),
-     ]
-
-    """ metrics = [
         BleuScore(),
-        NonLLMContextPrecisionWithReference(),
-        ResponseRelevancy(),
-        Faithfulness(),
         RougeScore(),
-        AnswerRelevancy
-     ]"""
-
-    if "BlueScore" in metrics:
-        metrics.append(BleuScore())
-    if "RougeScore" in metrics:
-        metrics.append(RougeScore())
-
+        ContextPrecision()
+     ]
+    
     sample = SingleTurnSample(user_input=question, response=answer, retrieved_contexts=contexts)
     
     # TODO: Evaluate the response using the metrics    
