@@ -116,24 +116,32 @@ class ChromaEmbeddingPipelineTextOnly:
         """
         # TODO: Handle short texts that don't need chunking
         if len(text) <= self.chunk_size:
-            return [(text, metadata)]
-        
+            chunk_metadata = metadata.copy()
+            chunk_metadata['chunk_index'] = 0
+            chunk_metadata['total_chunks'] = 1
+            return [(text, chunk_metadata)]
+                
         # TODO: Implement chunking logic with overlap
         # TODO: Try to break at sentence boundaries
         # TODO: Create metadata for each chunk
         
         chunks = []        
         start = 0
+        text_len = len(text)
         
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
-        chunk_texts = text_splitter.split_text(text)
-        
-        for i, chunk_text in enumerate(chunk_texts):
-            chunk_metadata = metadata.copy()
-            chunk_metadata['chunk_index'] = i
-            chunks.append((chunk_text, chunk_metadata))
+        while start < text_len:
+            end = start + self.chunk_size
+            self.chunk_text = text[start:end]
             
-            start += self.chunk_size - self.chunk_overlap
+            chunk_metadata = metadata.copy()
+            chunk_metadata['chunk_index'] = len(chunks)
+            chunks.append((self.chunk_text, chunk_metadata))
+            
+        total = len(chunks)
+        for _, meta in chunks:
+            meta['total_chunks'] = total
+        
+        self.__log_chunk_stats(chunks)
             
         return chunks
     
@@ -464,6 +472,14 @@ class ChromaEmbeddingPipelineTextOnly:
         #   - Add or update in collection
         # TODO: Return statistics
         update_mode = update_mode.lower()
+
+        if update_mode == 'replace':
+            # Get existing documents for this file and delete them
+            existing_doc_ids = self.get_file_documents(file_path)
+            if existing_doc_ids:
+                self.collection.delete(ids=existing_doc_ids)
+                logger.info(f"Replaced {len(existing_doc_ids)} existing documents from file: {file_path}")
+
         
         for i in range(0, len(documents), batch_size):
             batch = documents[i:i + batch_size]
@@ -479,7 +495,7 @@ class ChromaEmbeddingPipelineTextOnly:
                 if exists and update_mode == 'skip':
                     stats['skipped'] += 1
                     continue
-                elif exists and update_mode == 'update':
+                if exists and update_mode == 'update':
                     success = self.update_document(doc_id, text, metadata)
                     if success:
                         stats['updated'] += 1
