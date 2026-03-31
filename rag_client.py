@@ -133,7 +133,7 @@ def format_context(documents: List[str], metadatas: List[Dict]) -> str:
     seen = set()
     unique_combined = []
     for doc, meta, score in combined:
-        identifier = (meta.get("mission", "Unknown Mission"), meta.get("category", "Unknown Category"))
+        identifier = (meta.get("mission", "Unknown Mission"),  meta.get("category", meta.get("category", "Unknown Category")))
         if identifier not in seen:
             seen.add(identifier)
             unique_combined.append((doc, meta, score))
@@ -158,7 +158,13 @@ def format_context(documents: List[str], metadatas: List[Dict]) -> str:
         
         # TODO: Create formatted source header with index number and extracted information
         # TODO: Add source header to context parts list
-        source_header = f"Source {idx + 1}: {mission_info} - {category_info} (Source: {source_info})\n"
+        source_info = meta.get("source", "Unknown Source")
+        
+        source_header =(
+            f"Source {idx + 1}: {mission_info} - {category_info} "
+            f"(Source: {source_info}, Score: {score})\n"
+        )
+
         context_parts.append(source_header)
         
         # TODO: Check document length and truncate if necessary
