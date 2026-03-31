@@ -12,6 +12,10 @@ from typing import Dict, List, Optional
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 import numpy as np
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 def get_evaluator_llm():
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -44,6 +48,12 @@ def get_default_metrics():
 # Set OpenAI API key for global default execution (if imported, this might not apply immediately)
 load_dotenv()
 api_key = os.environ.get('OPENAI_API_KEY')
+chroma_path = os.getenv('CHROMA_PERSIST_DIR', './chroma_db')
+collection_name = os.getenv('COLLECTION_NAME', 'nasa_missions')
+embedding_model_name = os.getenv('EMBEDDING_MODEL_NAME', 'sentence-transformers/all-MiniLM-L6-v2')
+n_results = int(os.getenv('N_RESULTS', '3'))
+
+
 if api_key:
     os.environ['OPENAI_API_KEY'] = api_key
     print("🔑 OpenAI API key configured")
@@ -53,24 +63,24 @@ else:
 print("⚙️ Configuration set!")
 
 # Initialize ChromaDB client
-client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
+client = chromadb.PersistentClient(path=chroma_path)
 
 # Create or get collection
 try:
-    collection = client.get_collection(COLLECTION_NAME)
-    print(f"✅ Loaded existing collection: {COLLECTION_NAME}")
+    collection = client.get_collection(collection_name)
+    print(f"✅ Loaded existing collection: {collection_name}")
 except:
     collection = client.create_collection(
-        name=COLLECTION_NAME,
+        name=collection_name,
         metadata={"description": "Demo collection for RAG evaluation"}
     )
-    print(f"✅ Created new collection: {COLLECTION_NAME}")
+    print(f"✅ Created new collection: {collection_name}")
 
 print(f"📊 Current collection size: {collection.count()} documents")
 
 
 print("🔄 Loading embedding model...")
-embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+embedding_model = SentenceTransformer(embedding_model_name)
 print("✅ Embedding model loaded!")
 
 # Sample documents about Space Missions
