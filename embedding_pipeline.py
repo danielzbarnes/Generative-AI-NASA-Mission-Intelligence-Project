@@ -125,17 +125,22 @@ class ChromaEmbeddingPipelineTextOnly:
         # TODO: Try to break at sentence boundaries
         # TODO: Create metadata for each chunk
         
+        if self.chunk_overlap >= self.chunk_size:
+            raise ValueError("Chunk overlap must be smaller than chunk size")
+        
         chunks = []        
         start = 0
         text_len = len(text)
         
         while start < text_len:
-            end = start + self.chunk_size
-            self.chunk_text = text[start:end]
+            end = min(start + self.chunk_size, text_len)
+            chunk_text = text[start:end]
             
             chunk_metadata = metadata.copy()
             chunk_metadata['chunk_index'] = len(chunks)
-            chunks.append((self.chunk_text, chunk_metadata))
+            chunks.append((chunk_text, chunk_metadata))
+            
+            start += self.chunk_size - self.chunk_overlap
             
         total = len(chunks)
         for _, meta in chunks:
