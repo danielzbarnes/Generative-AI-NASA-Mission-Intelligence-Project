@@ -211,7 +211,7 @@ def run_batch_evaluation(metrics_to_run=None):
     
     for gt in tqdm(ground_truth_data, desc="Processing QA Pairs", leave=False):
         question = gt.get("question", "")
-        ground_truth = gt.get("answer", "")
+        ground_truth = gt.get("answer", "") or gt.get("reference", "")
         
         # Get retrieval results using local collection
         retrieval_results = retrieve_documents_from_collection(local_collection, local_embedding_model, question)
