@@ -28,10 +28,14 @@ def evaluate_response_quality(question: str, answer: str, contexts: List[str]) -
     metrics = [        
         ResponseRelevancy(),
         Faithfulness(),
-        BleuScore(),
-        RougeScore(),
         ContextPrecision()
-     ]
+    ]
+    
+    if "BleuScore" in metrics:
+        metrics.append(BleuScore())
+    if "RougeScore" in metrics:
+        metrics.append(RougeScore())
+    
     
     sample = SingleTurnSample(user_input=question, response=answer, retrieved_contexts=contexts)
     
